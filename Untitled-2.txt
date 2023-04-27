@@ -1,0 +1,40 @@
+class InfixExpression:
+  def __init__(self, expression=""):
+    self.__expression = expression
+  
+  @property
+  def expression(self):
+      return self.__expression
+      
+  @expression.setter
+  def expression(self, new_expression):
+      self.__expression = new_expression
+
+  def update_expression(self, operator, expression):
+      self.__expression = f"({self.__expression}){operator}({expression})"
+  
+  def convert_to_postfix(self):
+      stack = []
+      output = ""
+
+      # Dictionary to store priority of the operators
+      priority = {"^": 3, "*": 2, "/": 2, "+": 1, "-": 1}
+
+      for char in self.__expression:
+          if char.isalnum():
+              output += char
+          elif char == "(":
+              stack.append(char)
+          elif char == ")":
+              while stack and stack[-1] != "(":
+                  output += stack.pop()
+              stack.pop() 
+          else:
+              while stack and stack[-1] != "(" and priority[char] <= priority.get(stack[-1], 0):
+                  output += stack.pop()
+              stack.append(char)
+
+      while stack:
+          output += stack.pop()
+
+      return output

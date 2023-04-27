@@ -1,0 +1,13 @@
+# Example usage
+e = InfixExpression("A+B*C")
+
+# Get expression value
+print(e.expression)        # Output: "A+B*C"
+
+# Update expression
+e.update_expression("-", "D")
+print(e.expression)        # Output: "(A+B*C)-(D)"
+
+# Convert to Postfix Notation
+postfix_notation = e.convert_to_postfix()
+print(postfix_notation)    # Output: "ABC*-" 
