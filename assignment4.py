@@ -43,14 +43,38 @@ def general_neighborhood(G, k, x):
 
 
 def is_transitive(G):
-    """
-    Checking whether a given directed graph object G is transitive or not.
-    """
-    for x in G.nodes():
-        for y in G.successors(x):
-            for z in G.successors(y):
-                if z not in G.successors(x):
-                    return False
+
+    # Create a dictionary to store the edges of the graph.
+    edges = {}
+    for a, b in G.edges():
+        # If the starting node is not in the dictionary, add it as a new key
+        if a not in edges:
+            edges[a] = []
+        edges[a].append(b)
+
+    # Check whether the graph is transitive
+    for a in edges:
+        visited = set()  # nusing a set to store the visited nodes
+        stack = edges[a][:]
+        while stack:
+            # Pop the last element from the stack
+            b = stack.pop()
+            # If the node has already been visited, skip it
+            if b in visited:
+                continue
+            else:
+                visited.add(b)
+            # If the node is in the edges dictionary, add its edges to the stack
+            if b in edges:
+                stack.extend(edges[b])
+        # Iterating over the visited set to check whether there is a path from
+        # every node in the set back to the starting node
+        for w in visited:
+            # If the node is in the edges dictionary and the starting node is not
+            # in the list of edges for that node, then the graph is not transitive
+            if w in edges and a not in edges[w]:
+                return False
+
     return True
 
 
@@ -59,16 +83,15 @@ def is_transitive(G):
 
 def transitive_closure(G):
     """
-    Returns the transitive closure graph of the input directed graph G.
+    Returns the transitive closure of the directed graph G.
     """
-    T = nx.DiGraph(G)  # creating an object for a copy of G
+    # Creating a new graph H as a copy of G
+    H = G.copy()
 
-    # Iterate over all pairs of nodes in G
-    for u in G.nodes():
-        for v in G.nodes():
-            # Check if there is a path from u to v in G
-            if nx.has_path(G, u, v):
-                # Add an edge from u to v in T
-                T.add_edge(u, v)
+    for i in H.nodes():
+        for j in H.nodes():
+            # investigating if there exist is a path from i to j in H
+            if nx.has_path(H, i, j):
+                H.add_edge(i, j)
 
-    return T
+    return H
